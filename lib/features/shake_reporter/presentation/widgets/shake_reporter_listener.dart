@@ -51,8 +51,9 @@ Future<void> showShakeReporterSheet({
     barrierColor: barrierColor,
     useRootNavigator: false,
     builder: (ctx) => BlocProvider(
-      create: (_) => sl<ShakeReporterCubit>()
-        ..initialize(captureScreenshotOnOpen: captureScreenshotOnOpen),
+      create: (_) =>
+          sl<ShakeReporterCubit>()
+            ..initialize(captureScreenshotOnOpen: captureScreenshotOnOpen),
       child: ShakeReporterLocalizationScope(
         strings: localizedStrings,
         child: const ShakeReporterBottomSheet(),
@@ -79,8 +80,9 @@ BuildContext? _resolveNavigatorContext({
 }
 
 ShakeReporterStrings _defaultStringsForContext(BuildContext context) {
-  final languageCode =
-      Localizations.maybeLocaleOf(context)?.languageCode.toLowerCase();
+  final languageCode = Localizations.maybeLocaleOf(
+    context,
+  )?.languageCode.toLowerCase();
   if (languageCode == 'ar') {
     return const ShakeReporterStrings.arabic();
   }

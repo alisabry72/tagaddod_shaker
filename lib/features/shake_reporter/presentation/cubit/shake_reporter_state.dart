@@ -22,6 +22,8 @@ class ShakeReporterLoading extends ShakeReporterState {
 }
 
 class ShakeReporterReady extends ShakeReporterState {
+  static const Object _noChange = Object();
+
   final DeviceContext deviceContext;
   final String? screenshotBase64;
   final bool includeScreenshot;
@@ -42,7 +44,7 @@ class ShakeReporterReady extends ShakeReporterState {
 
   ShakeReporterReady copyWith({
     DeviceContext? deviceContext,
-    String? screenshotBase64,
+    Object? screenshotBase64 = _noChange,
     bool? includeScreenshot,
     String? title,
     String? description,
@@ -51,7 +53,9 @@ class ShakeReporterReady extends ShakeReporterState {
   }) {
     return ShakeReporterReady(
       deviceContext: deviceContext ?? this.deviceContext,
-      screenshotBase64: screenshotBase64 ?? this.screenshotBase64,
+      screenshotBase64: screenshotBase64 == _noChange
+          ? this.screenshotBase64
+          : screenshotBase64 as String?,
       includeScreenshot: includeScreenshot ?? this.includeScreenshot,
       title: title ?? this.title,
       description: description ?? this.description,

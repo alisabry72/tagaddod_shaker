@@ -12,7 +12,7 @@ dependencies:
   tagaddod_shaker:
     git:
       url: git@github.com:alisabry72/tagaddod_shaker.git
-      ref: v0.1.0
+      ref: v0.1.2
 ```
 
 ## 2. Quick Start (Recommended)
@@ -58,6 +58,17 @@ FilledButton(
   child: const Text('Open Reporter'),
 )
 ```
+
+When opened manually, the reporter no longer auto-captures a screenshot.
+Users can attach one photo from camera/gallery directly inside the sheet.
+
+### Platform permissions for manual photo attach
+
+- iOS (`Info.plist`):
+  - `NSCameraUsageDescription`
+  - `NSPhotoLibraryUsageDescription`
+- Android:
+  - No extra setup in most cases; `image_picker` handles required manifest entries.
 
 ### Localization override (optional)
 

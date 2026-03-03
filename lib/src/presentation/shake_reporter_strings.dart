@@ -11,6 +11,13 @@ class ShakeReporterStrings {
     this.shakeReporterSubmitButton = 'Submit Report',
     this.shakeReporterScreenshotLabel = 'Screenshot',
     this.shakeReporterNoScreenshot = 'No screenshot available',
+    this.shakeReporterAddPhotoButton = 'Add photo',
+    this.shakeReporterChangePhotoButton = 'Change photo',
+    this.shakeReporterRemovePhotoButton = 'Remove photo',
+    this.shakeReporterPhotoSourceTitle = 'Attach photo',
+    this.shakeReporterPhotoSourceCamera = 'Take photo',
+    this.shakeReporterPhotoSourceGallery = 'Choose from gallery',
+    this.shakeReporterPhotoAttachFailed = 'Failed to attach photo',
   });
 
   const ShakeReporterStrings.arabic({
@@ -26,6 +33,13 @@ class ShakeReporterStrings {
     this.shakeReporterSubmitButton = 'إرسال البلاغ',
     this.shakeReporterScreenshotLabel = 'لقطة الشاشة',
     this.shakeReporterNoScreenshot = 'لا توجد لقطة شاشة متاحة',
+    this.shakeReporterAddPhotoButton = 'إضافة صورة',
+    this.shakeReporterChangePhotoButton = 'تغيير الصورة',
+    this.shakeReporterRemovePhotoButton = 'حذف الصورة',
+    this.shakeReporterPhotoSourceTitle = 'إرفاق صورة',
+    this.shakeReporterPhotoSourceCamera = 'التقاط صورة',
+    this.shakeReporterPhotoSourceGallery = 'اختيار من المعرض',
+    this.shakeReporterPhotoAttachFailed = 'تعذر إرفاق الصورة',
   });
 
   final String shakeReporterSheetTitle;
@@ -39,4 +53,11 @@ class ShakeReporterStrings {
   final String shakeReporterSubmitButton;
   final String shakeReporterScreenshotLabel;
   final String shakeReporterNoScreenshot;
+  final String shakeReporterAddPhotoButton;
+  final String shakeReporterChangePhotoButton;
+  final String shakeReporterRemovePhotoButton;
+  final String shakeReporterPhotoSourceTitle;
+  final String shakeReporterPhotoSourceCamera;
+  final String shakeReporterPhotoSourceGallery;
+  final String shakeReporterPhotoAttachFailed;
 }

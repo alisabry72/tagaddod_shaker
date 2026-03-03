@@ -17,10 +17,14 @@ class ReportFormBody extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Title field
+            Text(
+              context.locale.shakeReporterTitleLabel,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
             TextFormField(
               initialValue: state.title,
               decoration: InputDecoration(
-                labelText: context.locale.shakeReporterTitleLabel,
                 hintText: context.locale.shakeReporterTitleHint,
                 border: const OutlineInputBorder(),
               ),
@@ -31,11 +35,15 @@ class ReportFormBody extends StatelessWidget {
             const SizedBox(height: 14),
 
             // Description field
+            Text(
+              context.locale.shakeReporterDescriptionLabel,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            const SizedBox(height: 8),
             TextFormField(
               initialValue: state.description,
               maxLines: 4,
               decoration: InputDecoration(
-                labelText: context.locale.shakeReporterDescriptionLabel,
                 hintText: context.locale.shakeReporterDescriptionHint,
                 border: const OutlineInputBorder(),
               ),

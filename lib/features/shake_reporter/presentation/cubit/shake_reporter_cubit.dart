@@ -69,8 +69,16 @@ class ShakeReporterCubit extends Cubit<ShakeReporterState> {
   void updateDescription(String value) =>
       _updateReady((s) => s.copyWith(description: value));
 
-  void toggleScreenshot(bool include) =>
-      _updateReady((s) => s.copyWith(includeScreenshot: include));
+  void attachScreenshot(String screenshotBase64) => _updateReady(
+    (s) => s.copyWith(
+      screenshotBase64: screenshotBase64,
+      includeScreenshot: screenshotBase64.trim().isNotEmpty,
+    ),
+  );
+
+  void removeScreenshot() => _updateReady(
+    (s) => s.copyWith(screenshotBase64: null, includeScreenshot: false),
+  );
 
   Future<void> submitReport() async {
     final currentState = state;

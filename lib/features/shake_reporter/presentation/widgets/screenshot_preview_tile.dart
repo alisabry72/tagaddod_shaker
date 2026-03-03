@@ -2,12 +2,14 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tagaddod_shaker/src/presentation/shake_reporter_build_context_extensions.dart';
 import '../cubit/shake_reporter_cubit.dart';
 import '../cubit/shake_reporter_state.dart';
 
 class ScreenshotPreviewTile extends StatelessWidget {
   const ScreenshotPreviewTile({super.key});
+  static final ImagePicker _picker = ImagePicker();
 
   Uint8List? _decodeScreenshot(String? screenshotBase64) {
     if (screenshotBase64 == null) return null;
@@ -20,6 +22,62 @@ class ScreenshotPreviewTile extends StatelessWidget {
     } catch (_) {
       return null;
     }
+  }
+
+  Future<void> _pickAndAttachPhoto(BuildContext context) async {
+    final source = await _showSourcePicker(context);
+    if (source == null) return;
+
+    try {
+      final pickedFile = await _picker.pickImage(
+        source: source,
+        imageQuality: 75,
+        maxWidth: 1440,
+      );
+      if (pickedFile == null) return;
+
+      final bytes = await pickedFile.readAsBytes();
+      if (bytes.isEmpty) return;
+
+      if (!context.mounted) return;
+      context.read<ShakeReporterCubit>().attachScreenshot(base64Encode(bytes));
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(content: Text(context.locale.shakeReporterPhotoAttachFailed)),
+      );
+    }
+  }
+
+  Future<ImageSource?> _showSourcePicker(BuildContext context) {
+    final locale = context.locale;
+    return showModalBottomSheet<ImageSource>(
+      context: context,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(locale.shakeReporterPhotoSourceTitle),
+                dense: true,
+              ),
+              ListTile(
+                leading: const Icon(Icons.camera_alt_outlined),
+                title: Text(locale.shakeReporterPhotoSourceCamera),
+                onTap: () => Navigator.of(sheetContext).pop(ImageSource.camera),
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library_outlined),
+                title: Text(locale.shakeReporterPhotoSourceGallery),
+                onTap: () =>
+                    Navigator.of(sheetContext).pop(ImageSource.gallery),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -39,7 +97,12 @@ class ScreenshotPreviewTile extends StatelessWidget {
       builder: (context, state) {
         if (state is! ShakeReporterReady) return const SizedBox.shrink();
 
-        final screenshotBytes = _decodeScreenshot(state.screenshotBase64);
+        final hasAttachment =
+            state.includeScreenshot &&
+            (state.screenshotBase64?.trim().isNotEmpty ?? false);
+        final screenshotBytes = hasAttachment
+            ? _decodeScreenshot(state.screenshotBase64)
+            : null;
 
         return DecoratedBox(
           decoration: BoxDecoration(
@@ -52,10 +115,7 @@ class ScreenshotPreviewTile extends StatelessWidget {
             children: [
               // Header row
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
+                padding: const EdgeInsets.fromLTRB(14, 12, 14, 8),
                 child: Row(
                   children: [
                     Icon(
@@ -70,37 +130,65 @@ class ScreenshotPreviewTile extends StatelessWidget {
                         color: cs.onSurfaceVariant,
                       ),
                     ),
-                    const Spacer(),
-                    Switch.adaptive(
-                      value: state.includeScreenshot,
-                      onChanged: (value) => context
-                          .read<ShakeReporterCubit>()
-                          .toggleScreenshot(value),
-                    ),
                   ],
                 ),
               ),
 
-              // Preview image
-              if (state.includeScreenshot) ...[
-                Divider(height: 1, color: cs.outlineVariant),
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: screenshotBytes != null
-                        ? Image.memory(
-                            screenshotBytes,
-                            height: 110,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, error, stackTrace) =>
-                                _ScreenshotPlaceholder(cs: cs),
-                          )
-                        : _ScreenshotPlaceholder(cs: cs),
-                  ),
+              Divider(height: 1, color: cs.outlineVariant),
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: hasAttachment
+                          ? (screenshotBytes != null
+                                ? Image.memory(
+                                    screenshotBytes,
+                                    height: 110,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, error, stackTrace) =>
+                                        _ScreenshotPlaceholder(cs: cs),
+                                  )
+                                : _ScreenshotPlaceholder(cs: cs))
+                          : _ScreenshotPlaceholder(cs: cs),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        if (hasAttachment) ...[
+                          OutlinedButton.icon(
+                            onPressed: () => _pickAndAttachPhoto(context),
+                            icon: const Icon(Icons.photo_library_outlined),
+                            label: Text(
+                              context.locale.shakeReporterChangePhotoButton,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          TextButton.icon(
+                            onPressed: () => context
+                                .read<ShakeReporterCubit>()
+                                .removeScreenshot(),
+                            icon: const Icon(Icons.delete_outline),
+                            label: Text(
+                              context.locale.shakeReporterRemovePhotoButton,
+                            ),
+                          ),
+                        ] else ...[
+                          OutlinedButton.icon(
+                            onPressed: () => _pickAndAttachPhoto(context),
+                            icon: const Icon(Icons.add_a_photo_outlined),
+                            label: Text(
+                              context.locale.shakeReporterAddPhotoButton,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ],
           ),
         );
