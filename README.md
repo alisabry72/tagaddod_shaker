@@ -36,8 +36,22 @@ dependencies:
 import 'package:tagaddod_shaker/tagaddod_shaker.dart';
 ```
 
-Includes:
+Recommended quick integration:
 
+```dart
+await bootstrapShakeReporter();
+
+ShakeReporterListener(
+  routeNameResolver: () => 'HomeRoute',
+  child: YourScreen(),
+)
+```
+
+Core exports:
+
+- `bootstrapShakeReporter`
+- `ShakeReporterListener`
+- `showShakeReporterSheet`
 - `registerShakeReporterDependencies`
 - `ShakeDetectorService`
 - `ShakeReporterCubit`

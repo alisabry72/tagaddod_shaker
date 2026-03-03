@@ -9,3 +9,6 @@
 * Add `TagaddodShakerTrigger` tap widget for quick UI trigger wiring.
 * Re-export inspector setup types for HTTP/GraphQL logging integration.
 * Add extracted `features/shake_reporter` module from Collector with DI, data, domain, services, cubit, and bottom-sheet UI.
+* Add `bootstrapShakeReporter()` one-shot setup helper.
+* Add `ShakeReporterListener` plug-and-play widget.
+* Add `showShakeReporterSheet()` manual trigger helper.

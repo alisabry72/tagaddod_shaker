@@ -1,6 +1,9 @@
 # Shake Reporter Integration
 
-This package contains the extracted `shake_reporter` feature from Collector.
+This package supports two integration modes:
+
+- Quick Start (recommended): `bootstrapShakeReporter` + `ShakeReporterListener`
+- Manual (advanced): register services and open the sheet yourself
 
 ## 1. Install
 
@@ -12,9 +15,64 @@ dependencies:
       ref: v0.1.0
 ```
 
-## 2. Register Dependencies
+## 2. Quick Start (Recommended)
 
-`SharedPreferences` must be registered in `GetIt` before calling the package DI.
+### Bootstrap once in `main()`
+
+```dart
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await bootstrapShakeReporter();
+  runApp(const MyApp());
+}
+```
+
+`bootstrapShakeReporter()` will:
+
+- ensure `SharedPreferences` is registered in `GetIt`
+- register shake reporter dependencies
+- flush pending reports
+- initialize shake detector
+
+### Wrap your root screen/app
+
+```dart
+ShakeReporterListener(
+  routeNameResolver: () => 'HomeRoute',
+  child: YourScreen(),
+)
+```
+
+This listener automatically:
+
+- listens for shake events
+- captures screenshot via `RepaintBoundary`
+- opens `ShakeReporterBottomSheet`
+- prevents duplicate sheet opens
+
+### Manual fallback button (optional)
+
+```dart
+FilledButton(
+  onPressed: () => showShakeReporterSheet(context: context),
+  child: const Text('Open Reporter'),
+)
+```
+
+### Localization override (optional)
+
+```dart
+ShakeReporterListener(
+  stringsBuilder: (context) => const ShakeReporterStrings(
+    shakeReporterSheetTitle: 'Report an Issue',
+  ),
+  child: YourScreen(),
+)
+```
+
+## 3. Manual Integration (Advanced)
+
+Use this only when you need custom lifecycle or custom navigation flow.
 
 ```dart
 final sl = GetIt.instance;
@@ -28,38 +86,10 @@ await sl<FlushPendingReportsUseCase>().call();
 await sl<ShakeDetectorService>().initialize();
 ```
 
-## 3. Wrap Screen For Screenshot Capture
+Then open sheet yourself:
 
 ```dart
-RepaintBoundary(
-  key: ScreenshotCaptureService.boundaryKey,
-  child: YourScreen(),
-)
-```
-
-## 4. Open Bottom Sheet
-
-```dart
-showModalBottomSheet(
-  context: context,
-  isScrollControlled: true,
-  backgroundColor: Colors.transparent,
-  builder: (_) => BlocProvider(
-    create: (_) => GetIt.instance<ShakeReporterCubit>()..initialize(),
-    child: const ShakeReporterBottomSheet(),
-  ),
-);
-```
-
-## 5. Localization Override (Optional)
-
-```dart
-ShakeReporterLocalizationScope(
-  strings: const ShakeReporterStrings(
-    shakeReporterSheetTitle: 'Report an Issue',
-  ),
-  child: const ShakeReporterBottomSheet(),
-)
+showShakeReporterSheet(context: context);
 ```
 
 ## Required Build-Time Variables
@@ -74,6 +104,6 @@ Optional:
 - `API_LINK`
 - `APP_ENV`
 
-## Full Runnable Demo
+## Runnable Demo
 
 See `example/lib/main.dart`.

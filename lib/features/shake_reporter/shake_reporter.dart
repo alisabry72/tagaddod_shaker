@@ -1,3 +1,4 @@
+export 'shake_reporter_bootstrap.dart';
 export 'data/models/device_context_model.dart';
 export 'data/models/issue_report_model.dart';
 export 'data/models/shake_reporter_config_model.dart';
@@ -10,6 +11,7 @@ export 'domain/usecases/flush_pending_reports_usecase.dart';
 export 'presentation/cubit/shake_reporter_cubit.dart';
 export 'presentation/cubit/shake_reporter_state.dart';
 export 'presentation/widgets/shake_reporter_bottom_sheet.dart';
+export 'presentation/widgets/shake_reporter_listener.dart';
 export 'service/observed_fly.dart';
 export 'service/screenshot_capture_service.dart';
 export 'service/shake_detector_service.dart';
