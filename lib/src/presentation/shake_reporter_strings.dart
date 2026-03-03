@@ -13,6 +13,21 @@ class ShakeReporterStrings {
     this.shakeReporterNoScreenshot = 'No screenshot available',
   });
 
+  const ShakeReporterStrings.arabic({
+    this.shakeReporterSheetTitle = 'الإبلاغ عن مشكلة',
+    this.shakeReporterSheetSubtitle = 'هز الجهاز للتشغيل',
+    this.shakeReporterSubmitSuccess = 'تم إرسال البلاغ. شكرًا لك.',
+    this.shakeReporterSubmitQueued =
+        'تم الحفظ محليًا وسيتم إعادة المحاولة تلقائيًا.',
+    this.shakeReporterTitleLabel = 'العنوان *',
+    this.shakeReporterTitleHint = 'وصف مختصر للمشكلة',
+    this.shakeReporterDescriptionLabel = 'الوصف',
+    this.shakeReporterDescriptionHint = 'خطوات إعادة المشكلة (اختياري)',
+    this.shakeReporterSubmitButton = 'إرسال البلاغ',
+    this.shakeReporterScreenshotLabel = 'لقطة الشاشة',
+    this.shakeReporterNoScreenshot = 'لا توجد لقطة شاشة متاحة',
+  });
+
   final String shakeReporterSheetTitle;
   final String shakeReporterSheetSubtitle;
   final String shakeReporterSubmitSuccess;

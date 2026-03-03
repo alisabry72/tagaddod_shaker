@@ -27,7 +27,7 @@ class ShakeReporterCubit extends Cubit<ShakeReporterState> {
     this._getLinearTeamsUseCase,
   ) : super(ShakeReporterInitial());
 
-  Future<void> initialize() async {
+  Future<void> initialize({bool captureScreenshotOnOpen = true}) async {
     emit(const ShakeReporterLoading('Preparing report...'));
 
     final configResult = await _configUseCase.call();
@@ -40,7 +40,7 @@ class ShakeReporterCubit extends Cubit<ShakeReporterState> {
     final deviceContext = contextResult.fold((_) => _emptyDeviceContext(), id);
 
     String? screenshot;
-    if (config.screenshotEnabled) {
+    if (config.screenshotEnabled && captureScreenshotOnOpen) {
       final screenshotResult = await _screenshotUseCase.call();
       screenshot = screenshotResult.fold((_) => null, id);
     }
@@ -51,7 +51,10 @@ class ShakeReporterCubit extends Cubit<ShakeReporterState> {
       ShakeReporterReady(
         deviceContext: deviceContext,
         screenshotBase64: screenshot,
-        includeScreenshot: config.screenshotEnabled && screenshot != null,
+        includeScreenshot:
+            config.screenshotEnabled &&
+            captureScreenshotOnOpen &&
+            screenshot != null,
         title: '',
         description: '',
         linearTeams: linearTeams,

@@ -20,26 +20,71 @@ Future<void> showShakeReporterSheet({
   required BuildContext context,
   GetIt? serviceLocator,
   ShakeReporterStringsBuilder? stringsBuilder,
+  GlobalKey<NavigatorState>? navigatorKey,
+  bool captureScreenshotOnOpen = false,
   bool isScrollControlled = true,
   bool useRootNavigator = true,
   Color barrierColor = Colors.black54,
   Color backgroundColor = Colors.transparent,
 }) async {
-  final sl = serviceLocator ?? GetIt.instance;
-  await showModalBottomSheet<void>(
+  final navigatorContext = _resolveNavigatorContext(
     context: context,
+    navigatorKey: navigatorKey,
+    useRootNavigator: useRootNavigator,
+  );
+  if (navigatorContext == null) {
+    debugPrint(
+      'ShakeReporter: unable to open sheet because no Navigator was found for the provided context.',
+    );
+    return;
+  }
+
+  final sl = serviceLocator ?? GetIt.instance;
+  final localizedStrings =
+      stringsBuilder?.call(navigatorContext) ??
+      _defaultStringsForContext(navigatorContext);
+
+  await showModalBottomSheet<void>(
+    context: navigatorContext,
     isScrollControlled: isScrollControlled,
     backgroundColor: backgroundColor,
     barrierColor: barrierColor,
-    useRootNavigator: useRootNavigator,
+    useRootNavigator: false,
     builder: (ctx) => BlocProvider(
-      create: (_) => sl<ShakeReporterCubit>()..initialize(),
+      create: (_) => sl<ShakeReporterCubit>()
+        ..initialize(captureScreenshotOnOpen: captureScreenshotOnOpen),
       child: ShakeReporterLocalizationScope(
-        strings: stringsBuilder?.call(ctx) ?? const ShakeReporterStrings(),
+        strings: localizedStrings,
         child: const ShakeReporterBottomSheet(),
       ),
     ),
   );
+}
+
+BuildContext? _resolveNavigatorContext({
+  required BuildContext context,
+  required bool useRootNavigator,
+  GlobalKey<NavigatorState>? navigatorKey,
+}) {
+  final keyContext = navigatorKey?.currentContext;
+  if (keyContext != null) return keyContext;
+
+  final targetNavigator = Navigator.maybeOf(
+    context,
+    rootNavigator: useRootNavigator,
+  );
+  if (targetNavigator != null) return targetNavigator.context;
+
+  return Navigator.maybeOf(context)?.context;
+}
+
+ShakeReporterStrings _defaultStringsForContext(BuildContext context) {
+  final languageCode =
+      Localizations.maybeLocaleOf(context)?.languageCode.toLowerCase();
+  if (languageCode == 'ar') {
+    return const ShakeReporterStrings.arabic();
+  }
+  return const ShakeReporterStrings();
 }
 
 /// Plug-and-play listener that opens [ShakeReporterBottomSheet] on shake.
@@ -48,6 +93,7 @@ class ShakeReporterListener extends StatefulWidget {
     super.key,
     required this.child,
     this.serviceLocator,
+    this.navigatorKey,
     this.routeNameResolver,
     this.environmentResolver,
     this.stringsBuilder,
@@ -60,6 +106,7 @@ class ShakeReporterListener extends StatefulWidget {
 
   final Widget child;
   final GetIt? serviceLocator;
+  final GlobalKey<NavigatorState>? navigatorKey;
   final String Function()? routeNameResolver;
   final String Function()? environmentResolver;
   final ShakeReporterStringsBuilder? stringsBuilder;
@@ -128,7 +175,9 @@ class _ShakeReporterListenerState extends State<ShakeReporterListener> {
       await showShakeReporterSheet(
         context: context,
         serviceLocator: _sl,
+        navigatorKey: widget.navigatorKey,
         stringsBuilder: widget.stringsBuilder,
+        captureScreenshotOnOpen: true,
         isScrollControlled: widget.isScrollControlled,
         backgroundColor: widget.backgroundColor,
         barrierColor: widget.barrierColor,
