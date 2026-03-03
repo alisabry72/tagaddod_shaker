@@ -18,7 +18,7 @@ Current package state is ready for integration and validated with:
 dependencies:
   tagaddod_shaker:
     git:
-      url: git@github.com:Tagaddod/tagaddod_shaker.git
+      url: git@github.com:alisabry72/tagaddod_shaker.git
       ref: v0.1.0
 ```
 
@@ -47,5 +47,5 @@ Includes:
 
 ## Docs
 
-- Integration guide: [`docs/SHAKE_REPORTER_INTEGRATION.md`](/Users/test/Desktop/Code/Tagaddod/tagaddod_shaker/docs/SHAKE_REPORTER_INTEGRATION.md)
-- Runnable example app: [`example/lib/main.dart`](/Users/test/Desktop/Code/Tagaddod/tagaddod_shaker/example/lib/main.dart)
+- Integration guide: `docs/SHAKE_REPORTER_INTEGRATION.md`
+- Runnable example app: `example/lib/main.dart`

@@ -8,7 +8,7 @@ This package contains the extracted `shake_reporter` feature from Collector.
 dependencies:
   tagaddod_shaker:
     git:
-      url: git@github.com:Tagaddod/tagaddod_shaker.git
+      url: git@github.com:alisabry72/tagaddod_shaker.git
       ref: v0.1.0
 ```
 
@@ -76,4 +76,4 @@ Optional:
 
 ## Full Runnable Demo
 
-See [`example/lib/main.dart`](/Users/test/Desktop/Code/Tagaddod/tagaddod_shaker/example/lib/main.dart).
+See `example/lib/main.dart`.

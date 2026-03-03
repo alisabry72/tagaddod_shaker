@@ -1,7 +1,7 @@
 name: tagaddod_shaker
 description: "Reusable shaker host and trigger for requests_inspector integration."
 version: 0.1.0
-homepage: https://github.com/Tagaddod/tagaddod_shaker
+homepage: https://github.com/alisabry72/tagaddod_shaker
 publish_to: "none"
 
 environment:
