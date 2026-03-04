@@ -14,6 +14,13 @@ class ShakeReporterBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
     final safeBottom = MediaQuery.paddingOf(context).bottom;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final bottomSheetTheme = theme.bottomSheetTheme;
+    final sheetBackgroundColor =
+        bottomSheetTheme.modalBackgroundColor ??
+        bottomSheetTheme.backgroundColor ??
+        colorScheme.surface;
 
     return DraggableScrollableSheet(
       initialChildSize: 0.72,
@@ -27,21 +34,21 @@ class ShakeReporterBottomSheet extends StatelessWidget {
           padding: EdgeInsets.only(bottom: bottomInset),
           child: DecoratedBox(
             decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
+              color: sheetBackgroundColor,
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(24),
               ),
               border: Border(
                 top: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                  color: colorScheme.outlineVariant,
                   width: 0.5,
                 ),
                 left: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                  color: colorScheme.outlineVariant,
                   width: 0.5,
                 ),
                 right: BorderSide(
-                  color: Theme.of(context).colorScheme.outlineVariant,
+                  color: colorScheme.outlineVariant,
                   width: 0.5,
                 ),
               ),
@@ -79,7 +86,7 @@ class ShakeReporterBottomSheet extends StatelessWidget {
                     const _Header(),
                     Divider(
                       height: 1,
-                      color: Theme.of(context).colorScheme.outlineVariant,
+                      color: colorScheme.outlineVariant,
                     ),
                     Expanded(
                       child: SingleChildScrollView(

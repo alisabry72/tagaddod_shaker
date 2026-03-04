@@ -19,7 +19,7 @@ dependencies:
   tagaddod_shaker:
     git:
       url: git@github.com:alisabry72/tagaddod_shaker.git
-      ref: v0.1.4
+      ref: v0.1.6
 ```
 
 For local development:
