@@ -1,4 +1,5 @@
 export 'shake_reporter_bootstrap.dart';
+export 'shake_reporter_options.dart';
 export 'data/models/device_context_model.dart';
 export 'data/models/issue_report_model.dart';
 export 'data/models/shake_reporter_config_model.dart';

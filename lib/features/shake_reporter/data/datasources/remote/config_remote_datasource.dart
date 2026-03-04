@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
+import 'package:tagaddod_shaker/features/shake_reporter/shake_reporter_options.dart';
 
 import 'package:tagaddod_shaker/src/core/error/failures.dart';
 import 'package:tagaddod_shaker/features/shake_reporter/domain/entities/shake_reporter_config.dart';
@@ -13,32 +14,34 @@ abstract class ConfigRemoteDatasource {
 
 class ConfigRemoteDatasourceImpl implements ConfigRemoteDatasource {
   final FirebaseRemoteConfig _remoteConfig;
+  final ShakeReporterRemoteConfigKeys _keys;
+  final Duration _fetchTimeout;
+  final Duration? _minimumFetchInterval;
   bool _isConfigured = false;
 
-  ConfigRemoteDatasourceImpl(this._remoteConfig);
+  ConfigRemoteDatasourceImpl(
+    this._remoteConfig, {
+    ShakeReporterRemoteConfigKeys keys = const ShakeReporterRemoteConfigKeys(),
+    Duration fetchTimeout = const Duration(seconds: 10),
+    Duration? minimumFetchInterval,
+  }) : _keys = keys,
+       _fetchTimeout = fetchTimeout,
+       _minimumFetchInterval = minimumFetchInterval;
 
   Future<void> _configureIfNeeded() async {
     if (_isConfigured) return;
 
     await _remoteConfig.setConfigSettings(
       RemoteConfigSettings(
-        fetchTimeout: const Duration(seconds: 10),
-        minimumFetchInterval: kDebugMode
-            ? Duration.zero
-            : const Duration(minutes: 30),
+        fetchTimeout: _fetchTimeout,
+        minimumFetchInterval:
+            _minimumFetchInterval ??
+            (kDebugMode ? Duration.zero : const Duration(minutes: 30)),
       ),
     );
 
     // Prevent silent zero/empty values when a key is missing in Firebase.
-    await _remoteConfig.setDefaults(const <String, dynamic>{
-      'shake_reporter_enabled': false,
-      'shake_reporter_sensitivity_threshold': 2.7,
-      'shake_reporter_cooldown_seconds': 30,
-      'shake_reporter_screenshot_enabled': true,
-      'shake_reporter_blocked_routes': '[]',
-      'shake_reporter_allowed_environments': '["staging"]',
-      'shake_reporter_max_log_lines': 500,
-    });
+    await _remoteConfig.setDefaults(_keys.defaults());
 
     _isConfigured = true;
   }
@@ -72,25 +75,19 @@ class ConfigRemoteDatasourceImpl implements ConfigRemoteDatasource {
       await _configureIfNeeded();
       await _remoteConfig.fetchAndActivate();
 
-      final enabled = _remoteConfig.getBool('shake_reporter_enabled');
+      final enabled = _remoteConfig.getBool(_keys.enabled);
       final sensitivityThreshold = _remoteConfig.getDouble(
-        'shake_reporter_sensitivity_threshold',
+        _keys.sensitivityThreshold,
       );
-      final cooldownSeconds = _remoteConfig.getInt(
-        'shake_reporter_cooldown_seconds',
-      );
-      final screenshotEnabled = _remoteConfig.getBool(
-        'shake_reporter_screenshot_enabled',
-      );
-      final blockedRoutesString = _remoteConfig.getString(
-        'shake_reporter_blocked_routes',
-      );
+      final cooldownSeconds = _remoteConfig.getInt(_keys.cooldownSeconds);
+      final screenshotEnabled = _remoteConfig.getBool(_keys.screenshotEnabled);
+      final blockedRoutesString = _remoteConfig.getString(_keys.blockedRoutes);
       final blockedRoutes = _parseStringList(blockedRoutesString);
       final allowedEnvironmentsString = _remoteConfig.getString(
-        'shake_reporter_allowed_environments',
+        _keys.allowedEnvironments,
       );
       final allowedEnvironments = _parseStringList(allowedEnvironmentsString);
-      final maxLogLines = _remoteConfig.getInt('shake_reporter_max_log_lines');
+      final maxLogLines = _remoteConfig.getInt(_keys.maxLogLines);
 
       final config = ShakeReporterConfig(
         enabled: enabled,

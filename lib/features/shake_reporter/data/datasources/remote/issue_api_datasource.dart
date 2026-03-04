@@ -21,6 +21,7 @@ class IssueApiDatasourceImpl implements IssueApiDatasource {
   final String token;
   final String teamId;
   final String? projectId;
+  final String appApiLink;
   final ShakeDiagnosticsService diagnosticsService;
   static const int _maxInlineImageBase64Chars = 120000;
 
@@ -30,6 +31,7 @@ class IssueApiDatasourceImpl implements IssueApiDatasource {
     required this.token,
     required this.teamId,
     this.projectId,
+    this.appApiLink = ShakeReporterEndpoints.apiLink,
     required this.diagnosticsService,
   });
 
@@ -287,7 +289,7 @@ query Teams {
   }
 
   String _getEnvironmentFromApiLink() {
-    final link = ShakeReporterEndpoints.apiLink.toLowerCase();
+    final link = appApiLink.toLowerCase();
     if (link.contains('staging')) return 'Staging';
     if (link.contains('dev')) return 'Development';
     if (link.contains('localhost') || link.contains('10.0.2.2')) return 'Local';

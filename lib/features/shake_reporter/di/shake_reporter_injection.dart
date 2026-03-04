@@ -2,7 +2,6 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tagaddod_shaker/src/config/shake_reporter_endpoints.dart';
 
 import '../data/datasources/local/pending_reports_local_datasource.dart';
 import '../data/datasources/local/reporter_config_local_datasource.dart';
@@ -26,8 +25,12 @@ import '../service/device_context_service.dart';
 import '../service/shake_detector_service.dart';
 import '../service/screenshot_capture_service.dart';
 import '../service/shake_diagnostics_service.dart';
+import '../shake_reporter_options.dart';
 
-void registerShakeReporterDependencies(GetIt sl) {
+void registerShakeReporterDependencies(
+  GetIt sl, {
+  ShakeReporterOptions options = const ShakeReporterOptions(),
+}) {
   if (!sl.isRegistered<SharedPreferences>()) {
     throw StateError(
       'SharedPreferences must be registered in GetIt before calling registerShakeReporterDependencies().',
@@ -55,10 +58,11 @@ void registerShakeReporterDependencies(GetIt sl) {
   sl.registerLazySingleton<IssueApiDatasource>(
     () => IssueApiDatasourceImpl(
       sl<http.Client>(),
-      ShakeReporterEndpoints.linearApiLink,
-      token: ShakeReporterEndpoints.linearToken,
-      teamId: ShakeReporterEndpoints.linearTeamId,
-      projectId: ShakeReporterEndpoints.linearProjectId,
+      options.linear.apiLink,
+      token: options.linear.token,
+      teamId: options.linear.teamId,
+      projectId: options.linear.projectId,
+      appApiLink: options.linear.appApiLink,
       diagnosticsService: sl<ShakeDiagnosticsService>(),
     ),
   );
@@ -72,7 +76,12 @@ void registerShakeReporterDependencies(GetIt sl) {
     () => ScreenshotDatasourceImpl(sl<ScreenshotCaptureService>()),
   );
   sl.registerLazySingleton<ConfigRemoteDatasource>(
-    () => ConfigRemoteDatasourceImpl(FirebaseRemoteConfig.instance),
+    () => ConfigRemoteDatasourceImpl(
+      options.remoteConfig ?? FirebaseRemoteConfig.instance,
+      keys: options.remoteConfigKeys,
+      fetchTimeout: options.fetchTimeout,
+      minimumFetchInterval: options.minimumFetchInterval,
+    ),
   );
 
   // Repositories

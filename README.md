@@ -19,7 +19,7 @@ dependencies:
   tagaddod_shaker:
     git:
       url: git@github.com:alisabry72/tagaddod_shaker.git
-      ref: v0.1.2
+      ref: v0.1.4
 ```
 
 For local development:
@@ -39,12 +39,30 @@ import 'package:tagaddod_shaker/tagaddod_shaker.dart';
 Recommended quick integration:
 
 ```dart
-await bootstrapShakeReporter();
+await bootstrapShakeReporter(
+  options: const ShakeReporterOptions(
+    linear: ShakeReporterLinearConfig(
+      token: String.fromEnvironment('LINEAR_TOKEN'),
+      teamId: String.fromEnvironment('LINEAR_TEAM_ID'),
+    ),
+  ),
+);
 
 ShakeReporterListener(
   routeNameResolver: () => 'HomeRoute',
   child: YourScreen(),
 )
+```
+
+Codemagic example (`--dart-define` forwarding):
+
+```bash
+flutter build ipa \
+  --dart-define=LINEAR_TOKEN=$LINEAR_TOKEN \
+  --dart-define=LINEAR_TEAM_ID=$LINEAR_TEAM_ID \
+  --dart-define=LINEAR_PROJECT_ID=$LINEAR_PROJECT_ID \
+  --dart-define=LINEAR_LINK=$LINEAR_LINK \
+  --dart-define=API_LINK=$API_LINK
 ```
 
 Core exports:

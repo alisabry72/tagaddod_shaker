@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'di/shake_reporter_injection.dart';
+import 'shake_reporter_options.dart';
 import 'domain/usecases/flush_pending_reports_usecase.dart';
 import 'service/shake_detector_service.dart';
 
@@ -9,6 +10,7 @@ import 'service/shake_detector_service.dart';
 Future<void> bootstrapShakeReporter({
   GetIt? serviceLocator,
   SharedPreferences? sharedPreferences,
+  ShakeReporterOptions options = const ShakeReporterOptions(),
   bool flushPendingReports = true,
   bool initializeDetector = true,
 }) async {
@@ -20,7 +22,7 @@ Future<void> bootstrapShakeReporter({
   }
 
   if (!sl.isRegistered<ShakeDetectorService>()) {
-    registerShakeReporterDependencies(sl);
+    registerShakeReporterDependencies(sl, options: options);
   }
 
   if (flushPendingReports) {
