@@ -121,7 +121,9 @@ class ScreenshotPreviewTile extends StatelessWidget {
                           : _ScreenshotPlaceholder(cs: cs),
                     ),
                     const SizedBox(height: 10),
-                    Row(
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
                       children: [
                         if (hasAttachment) ...[
                           OutlinedButton.icon(
@@ -131,7 +133,6 @@ class ScreenshotPreviewTile extends StatelessWidget {
                               context.locale.shakeReporterChangePhotoButton,
                             ),
                           ),
-                          const SizedBox(width: 8),
                           TextButton.icon(
                             onPressed: () => context
                                 .read<ShakeReporterCubit>()

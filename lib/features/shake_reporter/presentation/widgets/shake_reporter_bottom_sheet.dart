@@ -60,10 +60,14 @@ class ShakeReporterBottomSheet extends StatelessWidget {
                 if (state is ShakeReporterFailure) {
                   debugPrint("Shake report submission failed");
                   Navigator.of(context).pop();
+                  final scheme = Theme.of(context).colorScheme;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      backgroundColor: Colors.orange,
-                      content: Text(context.locale.shakeReporterSubmitQueued),
+                      backgroundColor: scheme.secondaryContainer,
+                      content: Text(
+                        context.locale.shakeReporterSubmitQueued,
+                        style: TextStyle(color: scheme.onSecondaryContainer),
+                      ),
                     ),
                   );
                 }
@@ -154,23 +158,30 @@ class _Header extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                context.locale.shakeReporterSheetTitle,
-                style: tt.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: -0.3,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  context.locale.shakeReporterSheetTitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: tt.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.3,
+                  ),
                 ),
-              ),
-              Text(
-                context.locale.shakeReporterSheetSubtitle,
-                style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
-              ),
-            ],
+                Text(
+                  context.locale.shakeReporterSheetSubtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: tt.labelSmall?.copyWith(color: cs.onSurfaceVariant),
+                ),
+              ],
+            ),
           ),
-          const Spacer(),
+          const SizedBox(width: 8),
           IconButton(
             onPressed: () => Navigator.of(context).pop(),
             icon: const Icon(Icons.close, size: 18),

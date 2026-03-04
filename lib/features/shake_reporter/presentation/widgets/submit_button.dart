@@ -23,7 +23,10 @@ class SubmitButton extends StatelessWidget {
       builder: (context, state) {
         final isEnabled = state is ShakeReporterReady && state.isSubmitEnabled;
         final isLoading = state is ShakeReporterSubmitting;
-        final labelColor = isEnabled ? Colors.white : Colors.black54;
+        final scheme = Theme.of(context).colorScheme;
+        final labelColor = isEnabled
+            ? scheme.onPrimary
+            : scheme.onSurface.withValues(alpha: 0.38);
 
         return SizedBox(
           width: context.width,
@@ -39,20 +42,25 @@ class SubmitButton extends StatelessWidget {
               ),
             ),
             child: isLoading
-                ? const SizedBox(
+                ? SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: scheme.onPrimary,
                     ),
                   )
                 : Row(
-                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        context.locale.shakeReporterSubmitButton,
-                        style: TextStyle(color: labelColor),
+                      Flexible(
+                        child: Text(
+                          context.locale.shakeReporterSubmitButton,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: labelColor),
+                        ),
                       ),
                       const SizedBox(width: 8),
                       Icon(
