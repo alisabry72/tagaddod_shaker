@@ -24,9 +24,8 @@ class SubmitButton extends StatelessWidget {
         final isEnabled = state is ShakeReporterReady && state.isSubmitEnabled;
         final isLoading = state is ShakeReporterSubmitting;
         final scheme = Theme.of(context).colorScheme;
-        final labelColor = isEnabled
-            ? scheme.onPrimary
-            : scheme.onSurface.withValues(alpha: 0.38);
+        final enabledFg = scheme.onPrimary;
+        final disabledFg = scheme.onSurface.withValues(alpha: 0.5);
 
         return SizedBox(
           width: context.width,
@@ -35,6 +34,10 @@ class SubmitButton extends StatelessWidget {
                 ? () => context.read<ShakeReporterCubit>().submitReport()
                 : null,
             style: ElevatedButton.styleFrom(
+              backgroundColor: scheme.primary,
+              foregroundColor: enabledFg,
+              disabledBackgroundColor: scheme.surfaceContainerHighest,
+              disabledForegroundColor: disabledFg,
               padding: const EdgeInsets.symmetric(vertical: 14),
               textStyle: const TextStyle(
                 fontWeight: FontWeight.w600,
@@ -47,7 +50,7 @@ class SubmitButton extends StatelessWidget {
                     height: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: scheme.onPrimary,
+                      color: enabledFg,
                     ),
                   )
                 : Row(
@@ -59,14 +62,12 @@ class SubmitButton extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: labelColor),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Icon(
                         Icons.arrow_forward_rounded,
                         size: 16,
-                        color: labelColor,
                       ),
                     ],
                   ),
