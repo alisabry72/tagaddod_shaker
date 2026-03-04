@@ -25,12 +25,9 @@ class ScreenshotPreviewTile extends StatelessWidget {
   }
 
   Future<void> _pickAndAttachPhoto(BuildContext context) async {
-    final source = await _showSourcePicker(context);
-    if (source == null) return;
-
     try {
       final pickedFile = await _picker.pickImage(
-        source: source,
+        source: ImageSource.gallery,
         imageQuality: 75,
         maxWidth: 1440,
       );
@@ -47,37 +44,6 @@ class ScreenshotPreviewTile extends StatelessWidget {
         SnackBar(content: Text(context.locale.shakeReporterPhotoAttachFailed)),
       );
     }
-  }
-
-  Future<ImageSource?> _showSourcePicker(BuildContext context) {
-    final locale = context.locale;
-    return showModalBottomSheet<ImageSource>(
-      context: context,
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: Text(locale.shakeReporterPhotoSourceTitle),
-                dense: true,
-              ),
-              ListTile(
-                leading: const Icon(Icons.camera_alt_outlined),
-                title: Text(locale.shakeReporterPhotoSourceCamera),
-                onTap: () => Navigator.of(sheetContext).pop(ImageSource.camera),
-              ),
-              ListTile(
-                leading: const Icon(Icons.photo_library_outlined),
-                title: Text(locale.shakeReporterPhotoSourceGallery),
-                onTap: () =>
-                    Navigator.of(sheetContext).pop(ImageSource.gallery),
-              ),
-            ],
-          ),
-        );
-      },
-    );
   }
 
   @override

@@ -60,12 +60,11 @@ FilledButton(
 ```
 
 When opened manually, the reporter no longer auto-captures a screenshot.
-Users can attach one photo from camera/gallery directly inside the sheet.
+Users can attach one photo from the device photo library directly inside the sheet.
 
 ### Platform permissions for manual photo attach
 
 - iOS (`Info.plist`):
-  - `NSCameraUsageDescription`
   - `NSPhotoLibraryUsageDescription`
 - Android:
   - No extra setup in most cases; `image_picker` handles required manifest entries.
